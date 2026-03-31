@@ -20,7 +20,7 @@
   // ─────────────────────────────────────────
 
   const STORAGE_KEYS = {
-    contest_list: 'atcoder_ui_cleaner:contest_list:enabled',
+    contest_top: 'atcoder_ui_cleaner:contest_top:enabled',
     task_page:    'atcoder_ui_cleaner:task_page:enabled',
     submission:   'atcoder_ui_cleaner:submission_page:enabled',
   };
@@ -32,7 +32,7 @@
   // ─────────────────────────────────────────
 
   /**
-   * @returns {'contest_list' | 'task_page' | 'submission' | null}
+   * @returns {'contest_top' | 'task_page' | 'submission' | null}
    */
   function detectPageType() {
     const path = location.pathname;
@@ -49,7 +49,7 @@
 
     // problem list: /contests/******
     if (/^\/contests\/[^/]+\/?$/.test(path)) {
-      return 'contest_list';
+      return 'contest_top';
     }
 
     return null;
@@ -103,10 +103,10 @@
   }
 
   // ─────────────────────────────────────────
-  // 5.1.1 contest list
+  // 5.1.1 contest top
   // ─────────────────────────────────────────
 
-  function hideContestListElements() {
+  function hideContestTopElements() {
     // tageting every <section> tag which is a parent of nodes
     // ...holdinge one of the keywords as a substring
     const keywords = ['点数'];
@@ -206,8 +206,8 @@
     if (!isEnabled(pageType)) return;
 
     switch (pageType) {
-      case 'contest_list':
-        hideContestListElements();
+      case 'contest_top':
+        hideContestTopElements();
         break;
       case 'task_page':
         hideTaskPageElements();
