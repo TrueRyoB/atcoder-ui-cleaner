@@ -34,8 +34,8 @@
   function detectPageType() {
     const path = location.pathname;
 
-    // 提出詳細ページ: /contests/abc271/submissions/xxxxxxxxxx
-    if (/^\/contests\/abc271\/submissions\/\d+$/.test(path)) {
+    // 提出詳細ページ: /contests/abc***/submissions/xxxxxxxxxx
+    if (/^\/contests\/abc[^/]\/submissions\/\d+$/.test(path)) {
       return 'submission';
     }
 
