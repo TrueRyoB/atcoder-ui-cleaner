@@ -199,7 +199,7 @@
   }
 
   // ─────────────────────────────────────────
-  // メイン処理
+  // core function called for every redrawal
   // ─────────────────────────────────────────
 
   function run(pageType) {
@@ -219,13 +219,12 @@
   }
 
   // ─────────────────────────────────────────
-  // MutationObserver による動的再描画対応
+  // support for dynamic redrawal, using MutationObserver
   // ─────────────────────────────────────────
 
   function setupObserver(pageType) {
     let timer = null;
     const observer = new MutationObserver(() => {
-      // デバウンス: 連続した DOM 変化をまとめて処理
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
         run(pageType);
@@ -239,21 +238,18 @@
   }
 
   // ─────────────────────────────────────────
-  // エントリーポイント
+  // entry
   // ─────────────────────────────────────────
 
   function main() {
     const pageType = detectPageType();
     if (!pageType) return;
 
-    // 初回実行
     run(pageType);
-
-    // 動的変化への対応
     setupObserver(pageType);
   }
 
-  // DOM が準備できていれば即時、なければ DOMContentLoaded 後に実行
+  // calls main() on DOM load completion
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', main);
   } else {
