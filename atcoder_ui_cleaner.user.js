@@ -23,6 +23,7 @@
     contest_top: 'atcoder_ui_cleaner:contest_top:enabled',
     task_page:    'atcoder_ui_cleaner:task_page:enabled',
     submission:   'atcoder_ui_cleaner:submission_page:enabled',
+    task_list:    'atcoder_ui_cleaner:task_list:enabled',
   };
 
   const PROCESSED_ATTR = 'data-atcoder-ui-cleaner-hidden';
@@ -32,24 +33,29 @@
   // ─────────────────────────────────────────
 
   /**
-   * @returns {'contest_top' | 'task_page' | 'submission' | null}
+   * @returns {'contest_top' | 'task_page' | 'submission' | 'task_list' | null}
    */
   function detectPageType() {
     const path = location.pathname;
 
-    // submission detail: /contests/******/submissions/xxxxxxxxxx
+    // submission detail: /contests/******/submissions/xxxxxxxxxx/
     if (/^\/contests\/[^/]+\/submissions\/\d+$/.test(path)) {
       return 'submission';
     }
 
-    // task detail: /contests/******/tasks/******_*
+    // task detail: /contests/******/tasks/******_*/
     if (/^\/contests\/[^/]+\/tasks\/[^/]+$/.test(path)) {
       return 'task_page';
     }
 
-    // problem list: /contests/******
+    // problem list: /contests/******/
     if (/^\/contests\/[^/]+\/?$/.test(path)) {
       return 'contest_top';
+    }
+
+    // task list: /contests/*******/tasks
+    if (/^\/contests\/[^/]+\/tasks\/?$/.test(path)) {
+      return 'task_list';
     }
 
     return null;
@@ -199,6 +205,33 @@
   }
 
   // ─────────────────────────────────────────
+  // 5.1.4 task list
+  // ─────────────────────────────────────────
+  
+  function hideTaskListElements() {
+    // hide columns indicating time or memory limit
+    const targets = ["実行時間制限", "メモリ制限"];
+
+    const headerRow = document.querySelector('tr');
+    if(!headerRow) return;
+
+    const headers = [...headerRow.querySelectorAll('th')];
+    
+    const hide = [...headerRow.querySelectorAll('th')].map(cell =>
+      targets.some(t => cell.textContent === t)
+    );
+
+    const rows = document.querySelectorAll('tr');
+
+    rows.forEach(row => {
+      row.querySelectorAll('th, td').forEach((cell, i) => {
+        if(hide[i]) hideElement(cell);
+      })
+    })
+  }
+
+
+  // ─────────────────────────────────────────
   // core function called for every redrawal
   // ─────────────────────────────────────────
 
@@ -214,6 +247,9 @@
         break;
       case 'submission':
         hideSubmissionElements();
+        break;
+      case 'task_list':
+        hideTaskListElements();
         break;
     }
   }
