@@ -12,7 +12,7 @@
   'use strict';
 
   // ─────────────────────────────────────────
-  // 定数
+  // constants
   // ─────────────────────────────────────────
 
   const STORAGE_KEYS = {
@@ -24,28 +24,27 @@
   const PROCESSED_ATTR = 'data-atcoder-ui-cleaner-hidden';
 
   // ─────────────────────────────────────────
-  // ページ種別判定
+  // page categorization
   // ─────────────────────────────────────────
 
   /**
-   * 現在のページ種別を返す。
    * @returns {'contest_list' | 'task_page' | 'submission' | null}
    */
   function detectPageType() {
     const path = location.pathname;
 
-    // 提出詳細ページ: /contests/abc***/submissions/xxxxxxxxxx
-    if (/^\/contests\/abc[^/]\/submissions\/\d+$/.test(path)) {
+    // submission detail: /contests/******/submissions/xxxxxxxxxx
+    if (/^\/contests\/[^/]+\/submissions\/\d+$/.test(path)) {
       return 'submission';
     }
 
-    // 問題詳細ページ: /contests/abc***/tasks/abc***_*
-    if (/^\/contests\/abc[^/]+\/tasks\/abc[^/]+_[^/]+$/.test(path)) {
+    // task detail: /contests/******/tasks/******_*
+    if (/^\/contests\/[^/]+\/tasks\/[^/]+$/.test(path)) {
       return 'task_page';
     }
 
-    // 問題一覧ページ: /contests/abc*** (tasks サブパスなし)
-    if (/^\/contests\/abc[^/]+(\/tasks)?\/?$/.test(path)) {
+    // problem list: /contests/******
+    if (/^\/contests\/[^/]+\/?$/.test(path)) {
       return 'contest_list';
     }
 
