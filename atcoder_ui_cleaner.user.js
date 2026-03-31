@@ -52,17 +52,17 @@
   }
 
   // ─────────────────────────────────────────
-  // localStorage ヘルパー
+  // localStorage helper
   // ─────────────────────────────────────────
 
+  // is set enabled by defualt
   function isEnabled(pageType) {
     const val = localStorage.getItem(STORAGE_KEYS[pageType]);
-    // 未設定の場合はデフォルト ON
     return val === null ? true : val === 'true';
   }
 
   // ─────────────────────────────────────────
-  // 汎用: 要素の非表示化
+  // helper for applying a hidden tag
   // ─────────────────────────────────────────
 
   function hideElement(el) {
@@ -72,12 +72,12 @@
   }
 
   // ─────────────────────────────────────────
-  // テキスト検索ヘルパー
+  // helper for a text search
   // ─────────────────────────────────────────
 
   /**
-   * document 全体から、自身のテキストノードに keyword を含む要素を返す。
-   * 子要素のテキストは含めず、そのノード直下のテキストのみを対象にする。
+   * retrives a set of nodes with the certain keyword as its immediate child
+   * ...from the entire document
    */
   function findElementsByOwnText(keyword) {
     const walker = document.createTreeWalker(
@@ -99,22 +99,22 @@
   }
 
   // ─────────────────────────────────────────
-  // 5.1.1 問題一覧ページ
+  // 5.1.1 contest list
   // ─────────────────────────────────────────
 
   function hideContestListElements() {
-    // 「配点」を部分文字列として含むタグを子要素に持つ、最小の <section> タグ
-    const keywords = ['配点'];
+    // tageting every <section> tag which is a parent of nodes
+    // ...holdinge one of the keywords as a substring
+    const keywords = ['点数'];
     keywords.forEach((kw) => {
       const matched = findElementsByOwnText(kw);
       matched.forEach((el) => {
-        // 祖先を辿り、最小の <section> を探す
         let cursor = el;
         let minSection = null;
         while (cursor && cursor !== document.body) {
           if (cursor.tagName === 'SECTION') {
             minSection = cursor;
-            break; // 最初に見つかった（最も近い）section で止まる
+            break;
           }
           cursor = cursor.parentElement;
         }
@@ -123,10 +123,14 @@
         }
       });
     });
+
+    // and its associated h3 tag (outside of the section)
+    const h3tag = findElementsByOwnText('配点');
+    h3tag.forEach((el)=>hideElement(el));
   }
 
   // ─────────────────────────────────────────
-  // 5.1.2 問題詳細ページ
+  // 5.1.2 task detail
   // ─────────────────────────────────────────
 
   function hideTaskPageElements() {
