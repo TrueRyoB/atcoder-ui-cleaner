@@ -2,7 +2,7 @@
 // @name         AtCoder UI Cleaner
 // @namespace    https://atcoder.jp/
 // @version      1.0.0
-// @description  AtCoderの特定ページで配点・制限・ジャッジ結果などを非表示化するUserScript
+// @description  Hide certain UI elements from contest page for the reduced amount of noise. 
 // @author       (https://x.com/deep_nap_engine)
 // @match        https://atcoder.jp/contests/*
 // @grant        none
