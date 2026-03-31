@@ -133,12 +133,12 @@
   // 5.1.2 task detail
   // ─────────────────────────────────────────
 
+  // hide minimum wrappers with certain information
   function hideTaskPageElements() {
     const targets = ['実行時間制限', 'メモリ制限', '配点'];
     targets.forEach((kw) => {
       const matched = findElementsByOwnText(kw);
       matched.forEach((el) => {
-        // ラベルの最小単位（当該要素そのもの or その直近の li/p/div/tr）を非表示化
         const wrapper = findMinimalWrapper(el);
         hideElement(wrapper);
       });
@@ -146,19 +146,19 @@
   }
 
   /**
-   * el を包む最小の意味的ブロック要素を返す。
-   * li / p / div / tr / td が近くにある場合はそれを使う。
-   * なければ el 自身を返す。
+   * retrieves the minimum semantic UI element containing an input element;
+   * prioritizes li / p / div / tr / td for a cleaner DOM if they are close enough
    */
   function findMinimalWrapper(el) {
     const blockTags = new Set(['LI', 'P', 'DIV', 'TR', 'TD', 'DT', 'DD', 'SPAN']);
     let cursor = el;
-    // 直親で十分小さいブロックを探す（最大 3 階層まで）
+    // explore up to three levels
     for (let i = 0; i < 3; i++) {
       if (!cursor.parentElement || cursor.parentElement === document.body) break;
       const parent = cursor.parentElement;
       if (blockTags.has(parent.tagName)) {
-        // parent の中にこのキーワード要素以外のコンテンツが多くなければ parent を使う
+        // take the parent node if it seems not containing 
+        // ....other significant information
         const textLength = (parent.textContent || '').trim().length;
         if (textLength < 100) {
           cursor = parent;
@@ -173,28 +173,23 @@
   }
 
   // ─────────────────────────────────────────
-  // 5.1.3 提出詳細ページ
+  // 5.1.3 submission detail
   // ─────────────────────────────────────────
 
   function hideSubmissionElements() {
-    // <h4>ジャッジ結果</h4> を基準点として、同一スコープ内の後続要素をすべて非表示化
+    // hide every subsequent UI element in the same scope
+    // ...from and after the label specified
     const h4List = document.querySelectorAll('h4');
+    const label = 'ジャッジ結果';
     h4List.forEach((h4) => {
-      if (!h4.textContent.includes('ジャッジ結果')) return;
-      if (h4.hasAttribute(PROCESSED_ATTR)) return;
+      if (!h4.textContent.includes(label) ||
+          h4.hasAttribute(PROCESSED_ATTR) ||
+          !h4.parentElement) return;
 
-      // h4 の親（scope）内で h4 以降の兄弟要素を非表示化
-      const parent = h4.parentElement;
-      if (!parent) return;
-
-      // h4 自身も非表示
-      hideElement(h4);
-
-      // 同じ親の兄弟でh4より後のものをすべて非表示化
-      let sibling = h4.nextElementSibling;
-      while (sibling) {
-        hideElement(sibling);
-        sibling = sibling.nextElementSibling;
+      let u = h4;
+      while(u) {
+        hideElement(u);
+        u = u.nextElementSibling;
       }
     });
   }
