@@ -356,7 +356,7 @@
   addCheckbox(row, "実行時間制限", isEnabled(STORAGE_KEYS.hide.runtime_limit), "2000msを切ることはないでしょう", (v) => setEnabled(STORAGE_KEYS.hide.runtime_limit, v));
   addCheckbox(row, "メモリ制限", isEnabled(STORAGE_KEYS.hide.memory_limit), "普段通りの実装を心がけましょう", (v) => setEnabled(STORAGE_KEYS.hide.memory_limit, v));
   addCheckbox(row, "提出結果詳細", isEnabled(STORAGE_KEYS.hide.submission_detail), "下手な憶測は却って逆効果です", (v) => setEnabled(STORAGE_KEYS.hide.submission_detail, v));
-  addCheckbox(row, "問題ラベル", isEnabled(STORAGE_KEYS.hide.problem_label), "見て呉れに惑わされません", (v) => setEnabled(STORAGE_KEYS.hide.problem_label, v));
+  // addCheckbox(row, "問題ラベル", isEnabled(STORAGE_KEYS.hide.problem_label), "見て呉れに惑わされません", (v) => setEnabled(STORAGE_KEYS.hide.problem_label, v));
 
   // ─────────────────────────────────────────
   // support for dynamic redrawal, using MutationObserver
