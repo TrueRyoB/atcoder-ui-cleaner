@@ -27,6 +27,7 @@
   };
 
   const PROCESSED_ATTR = 'data-atcoder-ui-cleaner-hidden';
+  const EXCEPTION_CLASS = "ui-atcoder-ui-cleaner-critical";
 
   // ─────────────────────────────────────────
   // page categorization
@@ -76,7 +77,7 @@
   // ─────────────────────────────────────────
 
   function hideElement(el) {
-    if (!el || el.hasAttribute(PROCESSED_ATTR)) return;
+    if (!el || el.hasAttribute(PROCESSED_ATTR) || el.classList.contains(EXCEPTION_CLASS)) return;
     el.style.display = 'none';
     el.setAttribute(PROCESSED_ATTR, '1');
   }
@@ -286,7 +287,7 @@
 
   function addCheckbox(row, label, checked, description, onChange) {
     const div = document.createElement("div");
-    div.className = "checkbox";
+    div.className = "checkbox ";
 
     const labelElem = document.createElement("label");
     const input = document.createElement("input");
@@ -294,6 +295,7 @@
     input.checked = checked;
 
     labelElem.append(input, label);
+    labelElem.classList.add(EXCEPTION_CLASS);
 
     if (description) {
       const small = document.createElement("div");
@@ -321,7 +323,7 @@
               <h4 class="modal-title">${modalTitle}</h4>
             </div>
             <div class="modal-body">
-              <div class="container-fluid">
+              <div class="container-fluid ${EXCEPTION_CLASS}">
                 <div class="settings-row"></div>
               </div>
             </div>
@@ -335,7 +337,7 @@
 
   addCheckbox(row, "配点", true, "前から順番に解くことを推奨しています", (v) => console.log(v));
   addCheckbox(row, "実行時間制限", true, "2000msを切ることはないでしょう", (v) => console.log(v));
-  addCheckbox(row, "メモリ制限", true, "普段通りです", (v) => console.log(v));
+  addCheckbox(row, "メモリ制限", true, "普段通りの実装を心がけましょう", (v) => console.log(v));
   addCheckbox(row, "提出結果詳細", true, "下手な憶測は却って逆効果です", (v) => console.log(v));
   // addCheckbox(row, "問題ラベル", false, "見て呉れに惑わされません", (v) => console.log(v));
 
