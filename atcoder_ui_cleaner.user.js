@@ -20,10 +20,13 @@
   // ─────────────────────────────────────────
 
   const STORAGE_KEYS = {
-    contest_top: 'atcoder_ui_cleaner:contest_top:enabled',
-    task_page:    'atcoder_ui_cleaner:task_page:enabled',
-    submission:   'atcoder_ui_cleaner:submission_page:enabled',
-    task_list:    'atcoder_ui_cleaner:task_list:enabled',
+    hide: {
+      score: 'atcoder_ui_cleaner:hide_score:enabled',
+      runtime_limit: 'atcoder_ui_cleaner:hide_runtime_limit:enabled',
+      memory_limit: 'atcoder_ui_cleaner:hide_memory_limit:enabled',
+      submission_detail: 'atcoder_ui_cleaner:hide_submission_detail:enabled',
+      problem_label: 'atcoder_ui_cleaner:hide_problem_label:enabled',
+    }
   };
 
   const PROCESSED_ATTR = 'data-atcoder-ui-cleaner-hidden';
@@ -67,9 +70,13 @@
   // ─────────────────────────────────────────
 
   // is set enabled by defualt
-  function isEnabled(pageType) {
-    const val = localStorage.getItem(STORAGE_KEYS[pageType]);
+  function isEnabled(key) {
+    const val = localStorage.getItem(key);
     return val === null ? true : val === 'true';
+  }
+
+  function setEnabled(sectionType, value) {
+    localStorage.setItem(sectionType, value ? 'true' : 'false');
   }
 
   // ─────────────────────────────────────────
@@ -116,6 +123,8 @@
   function hideContestTopElements() {
     // tageting every <section> tag which is a parent of nodes
     // ...holdinge one of the keywords as a substring
+    if(!isEnabled(STORAGE_KEYS.hide.score)) return;
+
     const keywords = ['点数'];
     keywords.forEach((kw) => {
       const matched = findElementsByOwnText(kw);
@@ -237,8 +246,6 @@
   // ─────────────────────────────────────────
 
   function run(pageType) {
-    if (!isEnabled(pageType)) return;
-
     switch (pageType) {
       case 'contest_top':
         hideContestTopElements();
@@ -335,11 +342,11 @@
     legacyDropdownHTML: `<li><a data-toggle="modal" data-target="#my-settings-modal" style="cursor:pointer;"><span class=\"glyphicon glyphicon-wrench\" aria-hidden=\"true\"></span> ${dropdownLabel}</a></li>`,
   });
 
-  addCheckbox(row, "配点", true, "前から順番に解くことを推奨しています", (v) => console.log(v));
-  addCheckbox(row, "実行時間制限", true, "2000msを切ることはないでしょう", (v) => console.log(v));
-  addCheckbox(row, "メモリ制限", true, "普段通りの実装を心がけましょう", (v) => console.log(v));
-  addCheckbox(row, "提出結果詳細", true, "下手な憶測は却って逆効果です", (v) => console.log(v));
-  // addCheckbox(row, "問題ラベル", false, "見て呉れに惑わされません", (v) => console.log(v));
+  addCheckbox(row, "配点", isEnabled(STORAGE_KEYS.hide.score), "前から順番に解くことを推奨しています", (v) => setEnabled(STORAGE_KEYS.hide.score, v));
+  addCheckbox(row, "実行時間制限", isEnabled(STORAGE_KEYS.hide.runtime_limit), "2000msを切ることはないでしょう", (v) => setEnabled(STORAGE_KEYS.hide.runtime_limit, v));
+  addCheckbox(row, "メモリ制限", isEnabled(STORAGE_KEYS.hide.memory_limit), "普段通りの実装を心がけましょう", (v) => setEnabled(STORAGE_KEYS.hide.memory_limit, v));
+  addCheckbox(row, "提出結果詳細", isEnabled(STORAGE_KEYS.hide.submission_detail), "下手な憶測は却って逆効果です", (v) => setEnabled(STORAGE_KEYS.hide.submission_detail, v));
+  addCheckbox(row, "問題ラベル", isEnabled(STORAGE_KEYS.hide.problem_label), "見て呉れに惑わされません", (v) => setEnabled(STORAGE_KEYS.hide.problem_label, v));
 
   // ─────────────────────────────────────────
   // support for dynamic redrawal, using MutationObserver
