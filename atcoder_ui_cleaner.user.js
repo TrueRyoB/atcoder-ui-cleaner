@@ -255,6 +255,91 @@
   }
 
   // ─────────────────────────────────────────
+  // ui insertion (dropdown and modal)
+  // ─────────────────────────────────────────
+
+  function mountUI({
+    modalHTML,
+    dropdownHTML,
+    legacyDropdownHTML,
+    modalSelector = "#my-settings-modal",
+    rowSelector = ".settings-row",
+  }) {
+    document.body.insertAdjacentHTML("afterbegin", modalHTML);
+
+    document
+      .querySelector(".header-mypage_list li:nth-last-child(1)")
+      ?.insertAdjacentHTML("beforebegin", dropdownHTML);
+
+    document
+      .querySelector(".navbar-right .dropdown-menu .divider:nth-last-child(2)")
+      ?.insertAdjacentHTML("beforebegin", legacyDropdownHTML);
+
+    const modal = document.querySelector(modalSelector);
+    if (!modal) throw new Error("modal not found");
+
+    const row = modal.querySelector(rowSelector);
+    if (!row) throw new Error("settings row not found");
+
+    return { modal, row };
+  }
+
+  function addCheckbox(row, label, checked, description, onChange) {
+    const div = document.createElement("div");
+    div.className = "checkbox";
+
+    const labelElem = document.createElement("label");
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.checked = checked;
+
+    labelElem.append(input, label);
+
+    if (description) {
+      const small = document.createElement("div");
+      small.className = "small gray";
+      small.textContent = description;
+      labelElem.append(small);
+    }
+
+    div.append(labelElem);
+    row.append(div);
+
+    input.addEventListener("change", () => onChange(input.checked));
+  }
+
+  const modalTitle="ui-cleaner 表示設定";
+  const dropdownLabel="ui-cleaner 設定";
+
+  const { modal, row } = mountUI({
+    modalHTML: `
+      <div id="my-settings-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">x</button>
+              <h4 class="modal-title">${modalTitle}</h4>
+            </div>
+            <div class="modal-body">
+              <div class="container-fluid">
+                <div class="settings-row"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+    dropdownHTML: `<li><a data-toggle="modal" data-target="#my-settings-modal" style="cursor:pointer;"><i class=\"a-icon a-icon-setting\"></i> ${dropdownLabel}</a></li>`,
+    legacyDropdownHTML: `<li><a data-toggle="modal" data-target="#my-settings-modal" style="cursor:pointer;"><span class=\"glyphicon glyphicon-wrench\" aria-hidden=\"true\"></span> ${dropdownLabel}</a></li>`,
+  });
+
+  addCheckbox(row, "配点", true, "前から順番に解くことを推奨しています", (v) => console.log(v));
+  addCheckbox(row, "実行時間制限", true, "2000msを切ることはないでしょう", (v) => console.log(v));
+  addCheckbox(row, "メモリ制限", true, "普段通りです", (v) => console.log(v));
+  addCheckbox(row, "提出結果詳細", true, "下手な憶測は却って逆効果です", (v) => console.log(v));
+  // addCheckbox(row, "問題ラベル", false, "見て呉れに惑わされません", (v) => console.log(v));
+
+  // ─────────────────────────────────────────
   // support for dynamic redrawal, using MutationObserver
   // ─────────────────────────────────────────
 
