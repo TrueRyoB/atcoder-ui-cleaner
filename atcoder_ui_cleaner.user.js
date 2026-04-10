@@ -153,11 +153,17 @@
   // 5.1.2 task detail
   // ─────────────────────────────────────────
 
+  //TODO: 
   // hide minimum wrappers with certain information
   function hideTaskPageElements() {
-    const targets = ['実行時間制限', 'メモリ制限', '配点'];
+    const targets = [
+      { key: "実行時間制限", val: isEnabled(STORAGE_KEYS.hide.runtime_limit) },
+      { key: "メモリ制限", val: isEnabled(STORAGE_KEYS.hide.memory_limit) },
+      { key: "配点", val: isEnabled(STORAGE_KEYS.hide.score) },
+    ];
     targets.forEach((kw) => {
-      const matched = findElementsByOwnText(kw);
+      if(!kw.val) return;
+      const matched = findElementsByOwnText(kw.key);
       matched.forEach((el) => {
         const wrapper = findMinimalWrapper(el);
         hideElement(wrapper);
@@ -195,10 +201,10 @@
   // ─────────────────────────────────────────
   // 5.1.3 submission detail
   // ─────────────────────────────────────────
-
   function hideSubmissionElements() {
     // hide every subsequent UI element in the same scope
     // ...from and after the label specified
+    if(!isEnabled(STORAGE_KEYS.hide.submission_detail)) return;
     const h4List = document.querySelectorAll('h4');
     const label = 'ジャッジ結果';
     h4List.forEach((h4) => {
@@ -220,7 +226,10 @@
   
   function hideTaskListElements() {
     // hide columns indicating time or memory limit
-    const targets = ["実行時間制限", "メモリ制限"];
+    const targets = [
+      { key: "実行時間制限", val: isEnabled(STORAGE_KEYS.hide.runtime_limit) },
+      { key: "メモリ制限", val: isEnabled(STORAGE_KEYS.hide.memory_limit) }
+    ];
 
     const headerRow = document.querySelector('tr');
     if(!headerRow) return;
@@ -228,7 +237,7 @@
     const headers = [...headerRow.querySelectorAll('th')];
     
     const hide = [...headerRow.querySelectorAll('th')].map(cell =>
-      targets.some(t => cell.textContent === t)
+      targets.some(t => t.val && cell.textContent === t.key)
     );
 
     const rows = document.querySelectorAll('tr');
@@ -294,7 +303,8 @@
 
   function addCheckbox(row, label, checked, description, onChange) {
     const div = document.createElement("div");
-    div.className = "checkbox ";
+    div.className = "checkbox";
+    div.classList.add(EXCEPTION_CLASS);
 
     const labelElem = document.createElement("label");
     const input = document.createElement("input");
@@ -317,7 +327,7 @@
     input.addEventListener("change", () => onChange(input.checked));
   }
 
-  const modalTitle="ui-cleaner 表示設定";
+  const modalTitle="ui-cleaner 非表示設定";
   const dropdownLabel="ui-cleaner 設定";
 
   const { modal, row } = mountUI({
