@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AtCoder UI Cleaner
 // @namespace    https://atcoder.jp/
-// @version      1.0.1
+// @version      1.0.3
 // @description  Hide certain UI elements from contest page for the reduced amount of noise. 
 // @author       (https://x.com/deep_nap_engine)
 // @match        https://atcoder.jp/contests/*
@@ -386,7 +386,7 @@
       </div>
     `,
     dropdownHTML: `<li><a data-toggle="modal" data-target="#my-settings-modal" style="cursor:pointer;"><i class=\"a-icon a-icon-setting\"></i> ${dropdownLabel}</a></li>`,
-    legacyDropdownHTML: `<li><a data-toggle="modal" data-target="#my-settings-modal" style="cursor:pointer;"><span class=\"glyphicon glyphicon-wrench\" aria-hidden=\"true\"></span> ${dropdownLabel}</a></li>`,
+    legacyDropdownHTML: `<li><a data-toggle="modal" data-target="#my-settings-modal" style="cursor:pointer;"><span class=\"glyphicon glyphicon-eye-close\" aria-hidden=\"true\"></span> ${dropdownLabel}</a></li>`,
   });
 
   addCheckbox(row, "配点", isEnabled(STORAGE_KEYS.hide.score), "前から順番に解くことを推奨しています", (v) => setEnabled(STORAGE_KEYS.hide.score, v));
