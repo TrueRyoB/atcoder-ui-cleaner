@@ -155,6 +155,31 @@
 
   // hide minimum wrappers with certain information
   function hideTaskPageElements() {
+    // problem label
+    if(isEnabled(STORAGE_KEYS.hide.problem_label)) {
+      const label = document.title?.trim();
+      if(!label) return;
+
+      const m = label.match(/^[A-Z]\s*-\s*/);
+      if(!m) return;
+      const prefix=m[0];
+      const altered=label.slice(prefix.length) + " ";
+      document.title=altered;
+
+      const matched=findElementsByOwnText(label);
+      matched.forEach((el) => {
+        if(el.hasAttribute(PROCESSED_ATTR)) return;
+
+        for(const node of el.childNodes) if(node.nodeType==Node.TEXT_NODE) {
+          const text=node.nodeValue;
+          if(!text || !text.trimStart().startsWith(prefix)) continue;
+
+          node.nodeValue=altered;
+          el.setAttribute(PROCESSED_ATTR, "1");
+        }
+      })
+    }
+
     // score
     if(isEnabled(STORAGE_KEYS.hide.score)) {
       const matched = findElementsByOwnText("配点");
@@ -164,24 +189,19 @@
       })
     }
 
-    //memory, runtime
+    //memory, runtime (so-sorry for the hardcoding ;-;)
     let hideML=isEnabled(STORAGE_KEYS.hide.memory_limit);
     let hideRL=isEnabled(STORAGE_KEYS.hide.runtime_limit);
     if(!hideML && !hideRL) return;
 
-    //so-sorry for the hardcoding ;-;
-
     const matched = findElementsByOwnText("実行時間制限");
     matched.forEach((el) => {
       const p = findMinimalWrapper(el);
-      const txt=p.textContent;
-      if(p.classList.contains(EXCEPTION_CLASS)) return;
+      if(p.classList.contains(EXCEPTION_CLASS) || p.hasAttribute(PROCESSED_ATTR)) return;
       if(hideML && hideRL) {
         hideElement(p);
         return;
       }
-
-      if(p.hasAttribute(PROCESSED_ATTR)) return;
       p.setAttribute(PROCESSED_ATTR, '1');
       if (hideML) p.innerHTML = p.innerHTML.replace(/\/\s*メモリ制限\s*:[^<]+/, '');
       if (hideRL) p.innerHTML = p.innerHTML.replace(/実行時間制限\s*:[^/]+\/?/, '');
@@ -373,7 +393,7 @@
   addCheckbox(row, "実行時間制限", isEnabled(STORAGE_KEYS.hide.runtime_limit), "2000msを切ることはないでしょう", (v) => setEnabled(STORAGE_KEYS.hide.runtime_limit, v));
   addCheckbox(row, "メモリ制限", isEnabled(STORAGE_KEYS.hide.memory_limit), "普段通りの実装を心がけましょう", (v) => setEnabled(STORAGE_KEYS.hide.memory_limit, v));
   addCheckbox(row, "提出結果詳細", isEnabled(STORAGE_KEYS.hide.submission_detail), "下手な憶測は却って逆効果です", (v) => setEnabled(STORAGE_KEYS.hide.submission_detail, v));
-  // addCheckbox(row, "問題ラベル", isEnabled(STORAGE_KEYS.hide.problem_label), "見て呉れに惑わされません", (v) => setEnabled(STORAGE_KEYS.hide.problem_label, v));
+  addCheckbox(row, "問題ラベル", isEnabled(STORAGE_KEYS.hide.problem_label), "見て呉れに惑わされません", (v) => setEnabled(STORAGE_KEYS.hide.problem_label, v));
 
   // ─────────────────────────────────────────
   // support for dynamic redrawal, using MutationObserver
