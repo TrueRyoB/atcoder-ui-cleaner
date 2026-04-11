@@ -5,11 +5,11 @@ A userscript to hide certain UI elements from contest page for the reduced amoun
 [Greasy Forks link](https://greasyfork.org/en/scripts/572015-atcoder-ui-cleaner)
 
 ### Noise
+- Score
 - Time limit
 - Memory limit
-- Score
-- Detail of judge result
+- Submission Detail
+- Problem Label
 
 ### Limitations
 - Only works when the site language is set to Japanese
-- No per-feature toggle (all-or-nothing behavior)
