@@ -153,22 +153,39 @@
   // 5.1.2 task detail
   // ─────────────────────────────────────────
 
-  //TODO: 
   // hide minimum wrappers with certain information
   function hideTaskPageElements() {
-    const targets = [
-      { key: "実行時間制限", val: isEnabled(STORAGE_KEYS.hide.runtime_limit) },
-      { key: "メモリ制限", val: isEnabled(STORAGE_KEYS.hide.memory_limit) },
-      { key: "配点", val: isEnabled(STORAGE_KEYS.hide.score) },
-    ];
-    targets.forEach((kw) => {
-      if(!kw.val) return;
-      const matched = findElementsByOwnText(kw.key);
+    // score
+    if(isEnabled(STORAGE_KEYS.hide.score)) {
+      const matched = findElementsByOwnText("配点");
       matched.forEach((el) => {
         const wrapper = findMinimalWrapper(el);
         hideElement(wrapper);
-      });
-    });
+      })
+    }
+
+    //memory, runtime
+    let hideML=isEnabled(STORAGE_KEYS.hide.memory_limit);
+    let hideRL=isEnabled(STORAGE_KEYS.hide.runtime_limit);
+    if(!hideML && !hideRL) return;
+
+    //so-sorry for the hardcoding ;-;
+
+    const matched = findElementsByOwnText("実行時間制限");
+    matched.forEach((el) => {
+      const p = findMinimalWrapper(el);
+      const txt=p.textContent;
+      if(p.classList.contains(EXCEPTION_CLASS)) return;
+      if(hideML && hideRL) {
+        hideElement(p);
+        return;
+      }
+
+      if(p.hasAttribute(PROCESSED_ATTR)) return;
+      p.setAttribute(PROCESSED_ATTR, '1');
+      if (hideML) p.innerHTML = p.innerHTML.replace(/\/\s*メモリ制限\s*:[^<]+/, '');
+      if (hideRL) p.innerHTML = p.innerHTML.replace(/実行時間制限\s*:[^/]+\/?/, '');
+    })
   }
 
   /**
